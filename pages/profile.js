@@ -1,0 +1,106 @@
+import React, { Component } from 'react';
+import { Header, Icon, Loader, Divider, Dimmer, Message } from 'semantic-ui-react';
+import Layout from '../components/Layout';
+import web3 from '../ethereum/web3';
+import factory from '../ethereum/factory';
+import Profile from '../ethereum/profile';
+// import Rental from '../ethereum/rental';
+import { Link, Router } from '../routes';
+
+
+class ProfileShow extends Component {
+
+    state = {
+        loader: this.props.loader,
+        address: null,
+        isUser: this.props.isUser,
+        token: 10
+    };
+
+    async componentDidMount() {
+        if(this.props.address == 'user'){
+            const accounts = await web3.eth.getAccounts();
+            const hasAddress = await factory.methods.hasProfile(accounts[0]).call();
+            if(!hasAddress){
+                this.setState({ address: accounts[0], isUser: false, loader: false });
+            } else {
+                const profileAddress = await factory.methods.getProfile(accounts[0]).call();
+                var profile = Profile(profileAddress);
+                var token = await profile.methods.getToken().call();    
+                var loader = false;
+                var isUser = true;
+
+                this.setState({ address: accounts[0], loader , isUser, token });
+            }
+        }
+    }
+
+    static async getInitialProps(props) {
+        const { address } = props.query;
+        if(address == 'user'){
+            var loader = true;
+            var isUser = false;
+        } else {
+            var loader = false;
+            var isUser = true;
+        }
+
+        return { address , loader, isUser };
+    }
+
+    renderUser(){
+        return(
+            <React.Fragment>
+                <Header as='h2' icon textAlign='center' style={{marginTop: 10}}>
+                    <Icon name='user' circular/>
+                    <Header.Content>USER ID</Header.Content>
+                    <Header.Subheader>
+                        <div style={{overflow: 'hidden', textOverflow: 'ellipsis'}}>{this.state.address}</div>
+                    </Header.Subheader>
+                    <span>Number of Tokens: {this.state.token/1}</span>
+                </Header>
+
+                <Divider hidden/>
+            </React.Fragment>
+        );
+    }
+
+    renderNonUser() {
+        return(
+            <React.Fragment>
+                <Header as='h2' icon textAlign='center'>
+                    <Icon name='user' circular />
+                    <Header.Content>GUEST USER</Header.Content>
+                    <Header.Subheader>
+                        <div style={{overflow: 'hidden', textOverflow: 'ellipsis'}}>{this.state.address}</div>
+                    </Header.Subheader>
+                    <span>Number of Tokens: {this.state.token}</span>
+                </Header>
+            </React.Fragment>
+        );
+    }
+
+    render() {
+        const ownProfile = this.props.address == 'user' && this.state.address;
+        const whichProfile = ownProfile ? 'Your Profile' : 'User Profile';
+        return(
+            <Layout>
+                <h3>{whichProfile}</h3>
+                {ownProfile && <Message color='green' compact style={{marginTop: 0, padding: 10}}>
+                    <Icon name='check circle'/>
+                    Your profile is verified
+                </Message>}
+
+                {this.state.isUser? this.renderUser() : this.renderNonUser()}
+                
+                <Divider hidden/>
+
+                <Dimmer active={this.state.loader} inverted style={{ position: 'fixed' }}>
+                    <Loader size='large'>Loading</Loader>
+                </Dimmer>
+            </Layout>
+        );
+    }
+}
+
+export default ProfileShow;
