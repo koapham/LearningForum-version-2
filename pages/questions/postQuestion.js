@@ -40,14 +40,15 @@ class QuestionNew extends Component {
         this.setState({ loading: true, popup: false, errorMessage: '' });
 
         try{
-            const descBuf = Buffer.from(description, 'utf8');
-            const descHash = await getIpfsHash(descBuf);
+            //const descBuf = Buffer.from(description, 'utf8');
+            //const descHash = await getIpfsHash(descBuf);
             const accounts = await web3.eth.getAccounts();
             console.log("LOADINGGG " + this.state.loading)
             await factory.methods
-                .createQuestion(category, 
+                .createQuestion(category,
                                 questionTitle,
-                                descHash.substring(2),
+                                description,
+                                //descHash.substring(2),
                                 //web3.utils.toWei(deposit, 'ether'),
                                 Number(deposit),
                                 parseFloat(maxDuration) * 60 * 60,
