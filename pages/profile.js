@@ -1,12 +1,12 @@
-import React, { Component } from 'react';
-import { Header, Icon, Loader, Divider, Dimmer, Message } from 'semantic-ui-react';
+import React, { Component, useRef } from 'react';
+import { Header, Icon, Loader, Divider, Dimmer, Message, Segment, Button, Grid } from 'semantic-ui-react';
 import Layout from '../components/Layout';
 import web3 from '../ethereum/web3';
 import factory from '../ethereum/factory';
 import Profile from '../ethereum/profile';
+import ReactToPrint from 'react-to-print';
 // import Rental from '../ethereum/rental';
 import { Link, Router } from '../routes';
-
 
 class ProfileShow extends Component {
 
@@ -90,11 +90,26 @@ class ProfileShow extends Component {
                     <Icon name='check circle'/>
                     Your profile is verified
                 </Message>}
+               
+                <div ref={el => (this.componentRef = el)}>
+                    <Segment color='yellow'>
+                        <Header as='h1' color='red' textAlign='center'>
+                            <Icon name='certificate'/>
+                            <Header.Content>Certificate</Header.Content>
+                        </Header>
+                    {this.state.isUser? this.renderUser() : this.renderNonUser()} 
+                    </Segment>
+                </div>
 
-                {this.state.isUser? this.renderUser() : this.renderNonUser()}
-                
                 <Divider hidden/>
 
+                <Grid centered>
+                    <ReactToPrint
+                        trigger={() => <a href="#"><Button primary>Print</Button></a>}
+                        content={() => this.componentRef}
+                    />
+                </Grid>
+               
                 <Dimmer active={this.state.loader} inverted style={{ position: 'fixed' }}>
                     <Loader size='large'>Loading</Loader>
                 </Dimmer>
@@ -102,5 +117,6 @@ class ProfileShow extends Component {
         );
     }
 }
+
 
 export default ProfileShow;
