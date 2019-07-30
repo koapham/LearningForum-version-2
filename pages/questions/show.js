@@ -99,7 +99,7 @@ class QuestionShow extends Component {
         return { 
             address: props.query.address,
             questionTitle: summary[0],
-            description: await getString('Qm'+summary[1]),
+            description:summary[1], //await getString('Qm'+summary[1]),
             initialDeposit: ethers.utils.formatUnits(summary[2], "ether"),
             //maxDuration: summary[3],
             owner: summary[4],
