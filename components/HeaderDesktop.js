@@ -3,10 +3,9 @@ import { Menu, Segment, Container, Icon, Header, Grid, Input, Sticky, Rail } fro
 import { Link, Router } from '../routes';
 
 class HeaderDesktop extends Component {
-    constructor(props) {
+    constructor(props) { 
         super(props);
-        this.state = {value:''}
-  
+        this.state = {value:this.props.searchItem};
         this.handleChange = this.handleChange.bind(this);
         this.keyPress = this.keyPress.bind(this);
      } 
@@ -74,7 +73,8 @@ class HeaderDesktop extends Component {
                                         placeholder='Search Items...'
                                         size='small'
                                         onKeyDown={this.keyPress} 
-                                        onChange={this.handleChange}  
+                                        onChange={this.handleChange}
+                                        value ={this.state.value}  
                                         placeholder='Search Items...' size='small' fluid/>
                                     </Grid.Column>
                                 </Grid>
