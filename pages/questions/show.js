@@ -69,6 +69,7 @@ class QuestionShow extends Component {
         const summary = await question.methods.getSummary().call();
         const time = await question.methods.getTime().call();
         const profileOwner = await factory.methods.getProfile(summary[4]).call();
+        const category = await question.methods.getCategory().call();
         const fileHashesQuestion = summary[5];
         const fileNamesQuestion = summary[6];
         const initialTotalRating = await question.methods.getRatingQuestion().call();
@@ -99,9 +100,10 @@ class QuestionShow extends Component {
         return { 
             address: props.query.address,
             questionTitle: summary[0],
-            description:summary[1], //await getString('Qm'+summary[1]),
+            description: summary[1],//await getString('Qm'+summary[1]),
             initialDeposit: ethers.utils.formatUnits(summary[2], "ether"),
             //maxDuration: summary[3],
+            category: category,
             owner: summary[4],
             time: time,
             profileOwner: profileOwner,
@@ -250,7 +252,8 @@ class QuestionShow extends Component {
             maxDuration,
             publishTime,
             publishTimeMs,
-            maxDurationMs
+            maxDurationMs,
+            category
         } = this.props;
 
         const showRating = (this.state.submitRate ? this.state.totalRating : this.props.initialTotalRating)/1;
@@ -266,6 +269,12 @@ class QuestionShow extends Component {
             <React.Fragment>
                 <Table definition>
                     <Table.Body>
+                        <Table.Row>
+                            <Table.Cell> Category </Table.Cell>
+                            <Table.Cell style={{fontSize: '20px'}}>
+                                {category}
+                            </Table.Cell>
+                        </Table.Row>
                         <Table.Row>
                             <Table.Cell width={2}>Question</Table.Cell>
                             <Table.Cell style={{fontSize: '20px', lineHeight: '1.5'}}>
