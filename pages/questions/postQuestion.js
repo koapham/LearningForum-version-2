@@ -3,6 +3,7 @@ import { Form, Button, TextArea, Input, Message, Dropdown,
         Modal, Header, Segment, Icon, Divider, Label } from 'semantic-ui-react';
 import Layout from '../../components/Layout';
 import factory from '../../ethereum/factory';
+import Profile from '../../ethereum/profile';
 import web3 from '../../ethereum/web3';
 import { getIpfsHash } from '../../utils/ipfs';
 
@@ -43,18 +44,23 @@ class QuestionNew extends Component {
             //const descBuf = Buffer.from(description, 'utf8');
             //const descHash = await getIpfsHash(descBuf);
             const accounts = await web3.eth.getAccounts();
+            let hasProfile = true;
             try {
-                 await factory.methods.hasProfile(accounts[0]).call();}
+                hasProfile =  await factory.methods.hasProfile(accounts[0]).call();}
             catch (err){
                 throw Error("You have to be a user to post a question");}
 
+            if (!hasProfile){
+                if (deposit>10) throw Error("You don't have enough tokens to deposit to the question");
+            }
+           else{ 
             const profileAddress = await factory.methods.getProfile(accounts[0]).call();
             let profile = Profile(profileAddress);
-            var token = Number(await profile.methods.getToken().call());
+            let token = Number(await profile.methods.getToken().call());
             console.log("Yes");
             if (Number(deposit)>token) {
                 throw Error("You don't have enough tokens to deposit to the question");}
-            console.log("LOADINGGG " + this.state.loading)
+            console.log("LOADINGGG " + this.state.loading)};
             await factory.methods
                 .createQuestion(category,
                                 questionTitle,
