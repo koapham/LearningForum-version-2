@@ -43,6 +43,17 @@ class QuestionNew extends Component {
             //const descBuf = Buffer.from(description, 'utf8');
             //const descHash = await getIpfsHash(descBuf);
             const accounts = await web3.eth.getAccounts();
+            try {
+                 await factory.methods.hasProfile(accounts[0]).call();}
+            catch (err){
+                throw Error("You have to be a user to post a question");}
+
+            const profileAddress = await factory.methods.getProfile(accounts[0]).call();
+            let profile = Profile(profileAddress);
+            var token = Number(await profile.methods.getToken().call());
+            console.log("Yes");
+            if (Number(deposit)>token) {
+                throw Error("You don't have enough tokens to deposit to the question");}
             console.log("LOADINGGG " + this.state.loading)
             await factory.methods
                 .createQuestion(category,
