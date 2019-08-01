@@ -33,10 +33,10 @@ class QuestionIndex extends Component {
 
     static async getInitialProps({ req, query }) { 
         
-        const deployedQuestions = await factory.methods.getDeployedQuestions().call();
+        let deployedQuestions = await factory.methods.getDeployedQuestions().call();
         deployedQuestions.reverse();
         
-        let chosenQuestions;
+        //let chosenQuestions;
         console.log(query.value);
         let deployedAsking = [];
         let deployedQuery = [];
@@ -45,41 +45,34 @@ class QuestionIndex extends Component {
         let searchOrNot = false;
         let searchItem;
         //filter the questions based on search value
-        if (query.value === undefined || query.value === 'favicon.ico') {
-
-    
-            await Promise.all(
-                deployedQuestions.map(async (item) => {
-                    const itemCat = await Question(item).methods.getCategory().call();
-                    console.log(itemCat);
-                    switch (itemCat) {
-                        case "Asking":   {
-                            deployedAsking.push(item);
-                            break;
-                        }   
-                        case "Query": {
-                            deployedQuery.push(item);
-                            break;
-                        }   
-                        case "Discussion":  {
-                            deployedDiscussion.push(item);
-                            break;
-                        }   
-                    }
-                    console.log("deployedAsking: ", deployedAsking);
-                    console.log("deployedQuery: ", deployedQuery);
-                    console.log("deployedDiscussion: ", deployedDiscussion);
-                }));}
-        else {
+        if (query.value != undefined && query.value != 'favicon.ico') {
             searchItem = decodeURIComponent(query.value.substring(7));
-            chosenQuestions = await search(searchItem,deployedQuestions);
-            await Promise.all(
-                chosenQuestions.map(async (item)=>{deployed.push(item)})
-            );
-            console.log(deployed);
-            searchOrNot = true;
+            deployedQuestions = await search(searchItem,deployedQuestions);
         }
-        return {deployedAsking, deployedQuery, deployedDiscussion,deployed,searchOrNot,searchItem};
+        
+        await Promise.all(
+            deployedQuestions.map(async (item) => {
+                const itemCat = await Question(item).methods.getCategory().call();
+                console.log(itemCat);
+                switch (itemCat) {
+                    case "Asking":   {
+                        deployedAsking.push(item);
+                        break;
+                    }   
+                    case "Query": {
+                        deployedQuery.push(item);
+                        break;
+                    }   
+                    case "Discussion":  {
+                        deployedDiscussion.push(item);
+                        break;
+                    }   
+                }
+                console.log("deployedAsking: ", deployedAsking);
+                console.log("deployedQuery: ", deployedQuery);
+                console.log("deployedDiscussion: ", deployedDiscussion);
+            }))
+        return {deployedAsking, deployedQuery, deployedDiscussion,searchItem};
     }
 
     componentDidMount = async () => {
@@ -126,12 +119,12 @@ class QuestionIndex extends Component {
 
     componentDidUpdate = async (prevProps) =>{
         if (prevProps.searchItem != this.props.searchItem){
-        await this.renderData("Asking");
+        await this.renderData(this.state.activeCategory);
         console.log("componentDidUpdate");}
     }
 
     renderData = async (category) => {
-        const {deployedAsking, deployedQuery, deployedDiscussion,deployed,searchOrNot} = this.props;
+        const {deployedAsking, deployedQuery, deployedDiscussion} = this.props;
 
         console.log("deployedAsking: ", deployedAsking);
         console.log("deployedQuery: ", deployedQuery);
@@ -139,7 +132,6 @@ class QuestionIndex extends Component {
 
         let availableQuestions = [];
 
-        if (searchOrNot===false){
         switch (category) { 
             case "Asking": {
                 availableQuestions = deployedAsking;
@@ -153,10 +145,8 @@ class QuestionIndex extends Component {
                 availableQuestions = deployedDiscussion;
                 break;
             }  
-        }}
-        else availableQuestions = deployed;
+        }
         console.log("availableQuestions: ", availableQuestions);
-        console.log(searchOrNot);
 
         let titles = [];
         let deposit = [];
@@ -311,7 +301,6 @@ class QuestionIndex extends Component {
 
         return ( 
             <Container>
-                {(this.props.searchOrNot===false) ?
                 <Menu tabular color={'green'}>
                     <Menu.Item name='Asking' active={activeCategory === 'Asking'} 
                                 style={{fontSize:"18px"}}
@@ -322,7 +311,7 @@ class QuestionIndex extends Component {
                     <Menu.Item name='Discussion' active={activeCategory === 'Discussion'} 
                                 style={{fontSize:"18px"}}
                                 onClick={this.handleCategoryClick} />
-                </Menu>: null}
+                </Menu>
                 <Table>
                     <Table.Body>
                         {items}
@@ -336,7 +325,8 @@ class QuestionIndex extends Component {
         const itemsLength = this.state.availableQuestions? this.state.availableQuestions.length : 0;
         console.log("render() ");
         return(
-            <Layout>
+            <Layout searchItem = {this.props.searchItem} >
+                
                 <h2>Questions</h2>
                 <Divider hidden/>
 
