@@ -14,7 +14,7 @@ class DesktopContainer extends Component {
 
         return(
             <Responsive fireOnMount getWidth={getWidth} minWidth={Responsive.onlyTablet.minWidth}>
-                <HeaderDesktop contextRef={contextRef}>
+                <HeaderDesktop contextRef={contextRef} searchItem = {this.props.searchItem} >
                     <Container style={{ paddingTop: "10em" }}>
                         {children} 
                     </Container> 
@@ -52,7 +52,7 @@ class MobileContainer extends Component {
 class Layout extends Component {
     state = {};
 
-    static async getInitialProps({ req }) {
+    static async getInitialProps({ req}) {
         let isMobileFromSSR = false;
 
         if(req){
@@ -60,9 +60,9 @@ class Layout extends Component {
             const md = new MobileDetect(device);
             isMobileFromSSR = !!md.mobile();
         }
-
-        return { isMobileFromSSR };
+        return { isMobileFromSSR};
     }
+
 
     handleContextRef = contextRef => this.setState({ contextRef });
 
@@ -77,8 +77,9 @@ class Layout extends Component {
                     <meta name="viewport" content="width=device-width, initial-scale=1" />
                 </Head>
                 <div ref={this.handleContextRef}>
-                    <DesktopContainer contextRef={this.state.contextRef} getWidth={getWidthFactory(this.props.isMobileFromSSR)}>
+                    <DesktopContainer contextRef={this.state.contextRef} getWidth={getWidthFactory(this.props.isMobileFromSSR)} searchItem = {this.props.searchItem}>
                         {this.props.children} 
+                        
                     </DesktopContainer>
 
                     <MobileContainer contextRef={this.state.contextRef} getWidth={getWidthFactory(this.props.isMobileFromSSR)}>
