@@ -246,7 +246,7 @@ class QuestionNew extends Component {
                         />
                     </Form.Field>
                     <Form.Field>
-                        <label>Deposit ether</label>
+                        <label>Ether</label>
                         <Input 
                             label="ether" 
                             labelPosition="right"
