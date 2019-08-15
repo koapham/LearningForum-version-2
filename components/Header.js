@@ -6,7 +6,7 @@ export default () => {
     return(
         <Menu inverted stackable>
             <Menu.Item header>
-                Ethereum Rent
+                EtherLearn
             </Menu.Item>
 
             <Link route="/">
