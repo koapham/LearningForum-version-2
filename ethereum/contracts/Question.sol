@@ -11,6 +11,7 @@ contract QuestionFactory {
             address profile = new Profile(msg.sender);
             users[msg.sender] = profile;
         }    
+        require(deposit<Profile(users[msg.sender]).getToken());
         address newQuestion = new Question(category, questionTitle, description, deposit, maxDuration,
                                     fileHashesQuestion, fileNamesQuestion, msg.sender, users[msg.sender]);
         deployedQuestions.push(newQuestion);
