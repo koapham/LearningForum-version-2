@@ -1,92 +1,94 @@
 import React, { Component } from 'react';
-import { Menu, Segment, Container, Icon, Header, Grid, Input, Sticky, Rail } from 'semantic-ui-react';
-import { Link, Router } from '../routes';
+import MobileDetect from 'mobile-detect';
+import { Container, Responsive, Sidebar } from 'semantic-ui-react';
+import Head from 'next/head';
+import HeaderDesktop from './HeaderDesktop';
+import HeaderMobile from './HeaderMobile';
+import { getWidthFactory } from '../utils/device';
 
-class HeaderDesktop extends Component {
-    constructor(props) { 
-        super(props);
-        this.state = {value:this.props.searchItem};
-        this.handleChange = this.handleChange.bind(this);
-        this.keyPress = this.keyPress.bind(this);
-     } 
-   
-    handleChange(e) {
-        this.setState({ value: e.target.value });
-     }
-  
-    keyPress(e){
-        if(e.keyCode == 13){
-           console.log('value', e.target.value);
-           //console.log(encodeURIComponent(this.state.value));
-           if (this.state.value!='' && this.state.value!=undefined)
-                Router.pushRoute(`/${'search+'+encodeURIComponent(this.state.value)}`);
-           // put the login here
-        }
-    }
+class DesktopContainer extends Component {
+    state = {}
+
     render() {
+        const { getWidth, contextRef, children } = this.props;
+
+        return(
+            <Responsive fireOnMount getWidth={getWidth} minWidth={Responsive.onlyTablet.minWidth}>
+                <HeaderDesktop contextRef={contextRef} searchItem = {this.props.searchItem} >
+                    <Container style={{ paddingTop: "10em" }}>
+                        {children} 
+                    </Container> 
+                </HeaderDesktop>
+            </Responsive>
+        );
+    }
+}
+
+class MobileContainer extends Component {
+    state = { sidebarOpened: false };
+
+    handleSidebarHide = () => this.setState({ sidebarOpened: false })
+
+    handleToggle = () => this.setState({ sidebarOpened: true })
+
+    render() {
+        const { getWidth, contextRef, children } = this.props;
+
+        return(
+            <Responsive fireOnMount as={Sidebar.Pushable} getWidth={getWidth} maxWidth={Responsive.onlyMobile.maxWidth}>
+                <HeaderMobile contextRef={contextRef} 
+                            handleSidebarHide={this.handleSidebarHide} 
+                            handleToggle={this.handleToggle}
+                            sidebarOpened={this.state.sidebarOpened}>
+                    <Container style={{ paddingTop: "10em" }}>
+                        {children} 
+                    </Container> 
+                </HeaderMobile>
+            </Responsive>
+        );
+    }
+}
+
+class Layout extends Component {
+    state = {};
+
+    static async getInitialProps({ req}) {
+        let isMobileFromSSR = false;
+
+        if(req){
+            const device = req.headers["user-agent"];
+            const md = new MobileDetect(device);
+            isMobileFromSSR = !!md.mobile();
+        }
+        return { isMobileFromSSR};
+    }
+
+
+    handleContextRef = contextRef => this.setState({ contextRef });
+
+    render(){
         return(
             <React.Fragment>
-                <Rail
-                    internal
-                    position="left"
-                    attached
-                    style={{ top: "auto", height: "auto", width: "100%" }}
-                >
-                    <Sticky context={this.props.contextRef}>
-                        <Segment inverted vertical style={{ backgroundColor: '#1F5846' ,minHeight: 100, padding: '1em 0em 0em 0em', textAlign: 'flex-end'}}>
-                            <Menu inverted style={{ backgroundColor: '#1F5846' }} stackable fixed='top' size='large'>
-                                <Container>
-                                    <Link route="/">
-                                        <a className = "item">
-                                            Home
-                                        </a>
-                                    </Link>
+                <Head>
+                    <link 
+                        rel="stylesheet" 
+                        href="//cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css"
+                    />
+                    <meta name="viewport" content="width=device-width, initial-scale=1" />
+                </Head>
+                <div ref={this.handleContextRef}>
+                    <DesktopContainer contextRef={this.state.contextRef} getWidth={getWidthFactory(this.props.isMobileFromSSR)} searchItem = {this.props.searchItem}>
+                        {this.props.children} 
+                        
+                    </DesktopContainer>
 
-                                    <Menu.Menu position ="right">
-                                        <Link route="/questions/lend">
-                                            <a className = "item">
-                                                Post a question
-                                            </a>
-                                        </Link>
-
-                                        <Link route="/profile/user">
-                                            <a className = "item">
-                                                Profile
-                                            </a>
-                                        </Link>
-                                    </Menu.Menu>
-                                </Container>
-                            </Menu>
-                            <Container style={{marginTop: '40px'}}>
-                                <Grid inverted style={{padding: '0em 1em'}} relaxed verticalAlign='bottom'>
-                                    <Grid.Column width={4}>
-                                        <Header as='h3' inverted>
-                                            <Icon name='ethereum' style={{float: 'left'}}/>Ethereum Forum
-                                        </Header>
-                                    </Grid.Column >
-                                    <Grid.Column width={7} textAlign='center'>
-                                        <Input icon={<Icon name='search' inverted circular link  onClick={() =>
-                                    {
-                                         //console.log('value ',this.state.value);
-                                         if (this.state.value!='') Router.pushRoute(`/${'search+'+encodeURIComponent(this.state.value)}`);
-                                        }}/>}
-                                        placeholder='Search Items...'
-                                        size='small'
-                                        onKeyDown={this.keyPress} 
-                                        onChange={this.handleChange}
-                                        value ={this.state.value}  
-                                        placeholder='Search Items...' size='small' fluid/>
-                                    </Grid.Column>
-                                </Grid>
-                            </Container>
-                        </Segment>
-                    </Sticky>
-                </Rail>
-                {this.props.children}
+                    <MobileContainer contextRef={this.state.contextRef} getWidth={getWidthFactory(this.props.isMobileFromSSR)}>
+                        {this.props.children}
+                    </MobileContainer>
+                </div>     
             </React.Fragment>
         );
     }
 }
 
-export default HeaderDesktop;
-
+export default Layout;
