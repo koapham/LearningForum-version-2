@@ -38,29 +38,25 @@ class QuestionNew extends Component {
 
         const { category, questionTitle, description, deposit, maxDuration, fileHashes_array, fileNames_array} = this.state;
 
+
         this.setState({ loading: true, popup: false, errorMessage: '' });
 
         try{
             //const descBuf = Buffer.from(description, 'utf8');
             //const descHash = await getIpfsHash(descBuf);
+            
             const accounts = await web3.eth.getAccounts();
-            let hasProfile = true;
             try {
-                hasProfile =  await factory.methods.hasProfile(accounts[0]).call();}
+                 await factory.methods.hasProfile(accounts[0]).call();}
             catch (err){
                 throw Error("You have to be a user to post a question");}
 
-            if (!hasProfile){
-                if (deposit>10) throw Error("You don't have enough tokens to deposit to the question");
-            }
-           else{ 
-            const profileAddress = await factory.methods.getProfile(accounts[0]).call();
+            /*const profileAddress = await factory.methods.getProfile(accounts[0]).call();
             let profile = Profile(profileAddress);
-            let token = Number(await profile.methods.getToken().call());
+            var token = Number(await profile.methods.getToken().call());
             console.log("Yes");
             if (Number(deposit)>token) {
-                throw Error("You don't have enough tokens to deposit to the question");}
-            console.log("LOADINGGG " + this.state.loading)};
+                throw Error("You don't have enough tokens to deposit to the question");}*/
             await factory.methods
                 .createQuestion(category,
                                 questionTitle,
