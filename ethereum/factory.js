@@ -4,7 +4,7 @@ import QuestionFactory from './build/QuestionFactory.json';
 
 const instance = new web3.eth.Contract(
     JSON.parse(QuestionFactory.interface),
-    '0xd196569c9279a744746ae5085afd12ab9ada6ee3'// Cuong's new factory
+    '0x12c514f9b23c8aeecb80017592231fcc10cb1d10'
     //Thu ropsten: '0x44a365379dd1ac1e05d5203e54c1e8cd7f9d9383'
 );
 
