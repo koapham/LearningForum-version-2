@@ -70,7 +70,7 @@ class HeaderDesktop extends Component {
                                          //console.log('value ',this.state.value);
                                          if (this.state.value!='') Router.pushRoute(`/${'search+'+encodeURIComponent(this.state.value)}`);
                                         }}/>}
-                                        placeholder='Search Items...'
+                                        placeholder='Search topics...'
                                         size='small'
                                         onKeyDown={this.keyPress} 
                                         onChange={this.handleChange}
