@@ -16,7 +16,7 @@ class QuestionIndex extends Component {
         disabledShareToken: false,
         didShareToken: false,
         currentIndex: 0,
-        activeCategory: 'Asking',
+        activeCategory: 'CS Introduction',
         availableQuestions: [],
         titles: [], 
         deposit: [], 
@@ -38,9 +38,11 @@ class QuestionIndex extends Component {
         
         //let chosenQuestions;
         console.log(query.value);
-        let deployedAsking = [];
-        let deployedQuery = [];
-        let deployedDiscussion = [];
+        let deployedCat1 = [];
+        let deployedCat2 = [];
+        let deployedCat3 = [];
+        let deployedCat4 = [];
+        let deployedCat5 = [];
         let deployed =[];
         let searchOrNot = false;
         let searchItem;
@@ -55,24 +57,34 @@ class QuestionIndex extends Component {
                 const itemCat = await Question(item).methods.getCategory().call();
                 console.log(itemCat);
                 switch (itemCat) {
-                    case "Asking":   {
-                        deployedAsking.push(item);
+                    case "CS Introduction":   {
+                        deployedCat1.push(item);
                         break;
                     }   
-                    case "Query": {
-                        deployedQuery.push(item);
+                    case "Data Structures": {
+                        deployedCat2.push(item);
                         break;
                     }   
-                    case "Discussion":  {
-                        deployedDiscussion.push(item);
+                    case "Algorithms":  {
+                        deployedCat3.push(item);
                         break;
                     }   
+                    case "Machine Learning":  {
+                        deployedCat4.push(item);
+                        break;
+                    } 
+                    case "Blockchain":  {
+                        deployedCat5.push(item);
+                        break;
+                    } 
                 }
-                console.log("deployedAsking: ", deployedAsking);
-                console.log("deployedQuery: ", deployedQuery);
-                console.log("deployedDiscussion: ", deployedDiscussion);
+                console.log("deployedCat1: ", deployedCat1);
+                console.log("deployedCat2: ", deployedCat2);
+                console.log("deployedCat3: ", deployedCat3);
+                console.log("deployedCat4: ", deployedCat4);
+                console.log("deployedCat5: ", deployedCat5);
             }))
-        return {deployedAsking, deployedQuery, deployedDiscussion,searchItem};
+        return {deployedCat1, deployedCat2, deployedCat3, deployedCat4, deployedCat5, searchItem};
     }
 
     componentDidMount = async () => {
@@ -112,7 +124,7 @@ class QuestionIndex extends Component {
         //     deployedDiscussion: deployedDiscussion
         // });
 
-        await this.renderData("Asking");
+        await this.renderData("CS Introduction");
 
         console.log("componentDidMount");
     }
@@ -124,27 +136,37 @@ class QuestionIndex extends Component {
     }
 
     renderData = async (category) => {
-        const {deployedAsking, deployedQuery, deployedDiscussion} = this.props;
+        const {deployedCat1, deployedCat2, deployedCat3, deployedCat4, deployedCat5} = this.props;
 
-        console.log("deployedAsking: ", deployedAsking);
-        console.log("deployedQuery: ", deployedQuery);
-        console.log("deployedDiscussion: ", deployedDiscussion);
+        console.log("deployedCat1: ", deployedCat1);
+        console.log("deployedCat2: ", deployedCat2);
+        console.log("deployedCat3: ", deployedCat3);
+        console.log("deployedCat4: ", deployedCat4);
+        console.log("deployedCat5: ", deployedCat5);
 
         let availableQuestions = [];
 
         switch (category) { 
-            case "Asking": {
-                availableQuestions = deployedAsking;
+            case "CS Introduction": {
+                availableQuestions = deployedCat1;
                 break;
             }   
-            case "Query": {
-                availableQuestions = deployedQuery;
+            case "Data Structures": {
+                availableQuestions = deployedCat2;
                 break;
             }   
-            case "Discussion": {
-                availableQuestions = deployedDiscussion;
+            case "Algorithms": {
+                availableQuestions = deployedCat3;
                 break;
             }  
+            case "Machine Learning": {
+                availableQuestions = deployedCat4;
+                break;
+            } 
+            case "Blockchain": {
+                availableQuestions = deployedCat5;
+                break;
+            } 
         }
         console.log("availableQuestions: ", availableQuestions);
 
@@ -302,13 +324,19 @@ class QuestionIndex extends Component {
         return ( 
             <Container>
                 <Menu tabular color={'green'}>
-                    <Menu.Item name='Asking' active={activeCategory === 'Asking'} 
+                    <Menu.Item name='CS Introduction' active={activeCategory === 'CS Introduction'} 
                                 style={{fontSize:"18px"}}
                                 onClick={this.handleCategoryClick} />
-                    <Menu.Item name='Query' active={activeCategory === 'Query'} 
+                    <Menu.Item name='Data Structures' active={activeCategory === 'Data Structures'} 
                                 style={{fontSize:"18px"}}
                                 onClick={this.handleCategoryClick} />
-                    <Menu.Item name='Discussion' active={activeCategory === 'Discussion'} 
+                    <Menu.Item name='Algorithms' active={activeCategory === 'Algorithms'} 
+                                style={{fontSize:"18px"}}
+                                onClick={this.handleCategoryClick} />
+                    <Menu.Item name='Machine Learning' active={activeCategory === 'Machine Learning'} 
+                                style={{fontSize:"18px"}}
+                                onClick={this.handleCategoryClick} />
+                    <Menu.Item name='Blockchain' active={activeCategory === 'Blockchain'} 
                                 style={{fontSize:"18px"}}
                                 onClick={this.handleCategoryClick} />
                 </Menu>
