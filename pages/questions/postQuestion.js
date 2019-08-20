@@ -195,22 +195,34 @@ class QuestionNew extends Component {
 
         const tagOptions = [
             {
-              key: 'Asking',
-              text: 'Asking',
-              value: 'Asking',
-              label: { color: 'red', empty: true, circular: true },
+                key: 'CS Introduction',
+                text: 'CS Introduction',
+                value: 'CS Introduction',
+                label: { color: 'red', empty: true, circular: true },
             },
             {
-              key: 'Query',
-              text: 'Query',
-              value: 'Query',
-              label: { color: 'blue', empty: true, circular: true },
+                key: 'Data Structures',
+                text: 'Data Structures',
+                value: 'Data Structures',
+                label: { color: 'blue', empty: true, circular: true },
             },
             {
-              key: 'Discussion',
-              text: 'Discussion',
-              value: 'Discussion',
-              label: { color: 'green', empty: true, circular: true },
+                key: 'Algorithms',
+                text: 'Algorithms',
+                value: 'Algorithms',
+                label: { color: 'green', empty: true, circular: true },
+            },
+            {
+                key: 'Machine Learning',
+                text: 'Machine Learning',
+                value: 'Machine Learning',
+                label: { color: 'yellow', empty: true, circular: true },
+            },
+            {
+                key: 'Blockchain',
+                text: 'Blockchain',
+                value: 'Blockchain',
+                label: { color: 'grey', empty: true, circular: true },
             }
           ]
 
